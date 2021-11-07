@@ -3,7 +3,6 @@ This project is 1st selection of proposed projects from Neural Networks and Appl
 
 ## Project Description
 
-
 ### Dataset: HELOC
 
 
@@ -46,12 +45,18 @@ There are 2 aims for this.
 1. Tree-based Classifiers
    + Find the best classifier with TPOT
    + Other AutoML libraries to reduce labouring cost
+
 2. Neural Networks
    
-   I also tried deep neural networks, since the proposal insisted that deep learning models does not have enoguth interpretability nor satisfying performance from them. However, from [this survey](https://arxiv.org/pdf/2110.01889.pdf) one point out that there are numerous deep learning architectures proposed to deal with tabular data, even with explainability. Models below are the models proposed in my pipeline.
-   + [**TabNet**](https://arxiv.org/pdf/1908.07442.pdf) - New deep learning model that was proposed to deal with tabular data. [Code Implementation](https://github.com/dreamquark-ai/tabnet)
-   + [**Tab Transformer**](https://arxiv.org/pdf/2012.06678.pdf) - One of newly proposed attention-based multilayer perceptron. [Code Implementation](https://github.com/lucidrains/tab-transformer-pytorch)
-   + [**SAINT**](https://arxiv.org/pdf/2106.01342.pdf) - . [Code Implementation](https://github.com/somepago/saint)
+   I also tried deep neural networks, since the proposal insisted that deep learning models does not have enoguth interpretability nor satisfying performance from them. However, from [this survey](https://arxiv.org/pdf/2110.01889.pdf) one point out that there are numerous deep learning architectures proposed to deal with tabular data, even with explainability. Models below are the models that are widely used in the tabular data. I have only used **TabNet** in this project.
+   + [**TabNet**](https://arxiv.org/pdf/1908.07442.pdf) [Code Implementation](https://github.com/dreamquark-ai/tabnet)
+   + [**Tab Transformer**](https://arxiv.org/pdf/2012.06678.pdf) [Code Implementation](https://github.com/lucidrains/tab-transformer-pytorch)
+   + [**SAINT**](https://arxiv.org/pdf/2106.01342.pdf) [Code Implementation](https://github.com/somepago/saint)
+
+    Another reason for using deep neural networks is the feature. No features are directly related to the target label from the view. From the correlation map, one can also observe that there are many redundant features with each other. Take a look at the pairplot and correlation heatmap below (click to enlarge).
+    ![image](./assets/pairplot.png)
+    ![image](./assets/correlation_heatmap.png)
+    For this reason, I here suggest that **non-linearity should come to play**.
 
 ### 2. Finding features
 From [Yu Zhang](https://arxiv.org/pdf/2012.14261.pdf), interpretability of the neural networks are as follows.
@@ -64,11 +69,13 @@ Furthermore, I add i.i.d. Gaussian noise to features one by one, which is exampl
 
 ## Results
 ### Tree-based Classifiers
-Through TPOT, we got the best model of XGBoost with NNF1-score. 
+Through TPOT, we got the best model of XGBoost with on my train/dev split with 68% F1-score on dev.
 
 
 ### TabNet
 
-### Tab Transformer
+In **TabNet**, one can give variations of parameters in number of dimensions, attentions and steps. Here I have manually searched the best parameters with F1-score and accuracy. The results are shown belown.
+![image](./assets/f1_tabnet_wo_pp.png)
+![image](./assets/acc_tabnet_wo_pp.png)
 
-### SAINT
+I have used the best F1-score which is (`n_d=n_a=32`, `n_steps=7`)
