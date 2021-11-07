@@ -1,0 +1,3 @@
+data_dir: ./data
+train: train_data.csv
+valid: valid_data_nolabel.csv
