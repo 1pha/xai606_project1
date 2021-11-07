@@ -1,6 +1,20 @@
 # Financial Scoring Model (#30)
 This project is 1st selection of proposed projects from Neural Networks and Applications (XAI606) 2021 Fall.
 
+**Table of Contents**
+- [Financial Scoring Model (#30)](#financial-scoring-model-30)
+  - [Project Description](#project-description)
+    - [Dataset: HELOC](#dataset-heloc)
+    - [Task & Goal](#task--goal)
+  - [Proposed Methods](#proposed-methods)
+    - [1. Improving Performance](#1-improving-performance)
+    - [2. Finding features](#2-finding-features)
+  - [Results](#results)
+    - [Tree-based Classifiers](#tree-based-classifiers)
+    - [TabNet](#tabnet)
+  - [Conclusion](#conclusion)
+  - [References](#references)
+
 ## Project Description
 
 ### Dataset: HELOC
@@ -69,8 +83,13 @@ Furthermore, I add i.i.d. Gaussian noise to features one by one, which is exampl
 
 ## Results
 ### Tree-based Classifiers
-Through TPOT, we got the best model of XGBoost with on my train/dev split with 68% F1-score on dev.
+Through TPOT, we got the best model of XGBoost with on my train/dev split with 68% F1-score on dev. Tree-based classifiers support feature importance so therefore I plot the best models' feature importance below.
+![image](./assets/feature_importance_xgboost.png)
 
+Also I have arranged 10 fold in training set and test with hold-out dev set, then retrieved feature importances of the folds. We can use mean and variance of these results and its plot is shown below.
+![image](assets/feature_importance_10fold_xgboost.png)
+
+`ExternalRiskEstimate` shows the most importance in both results. `MSinceMostRecentInqexcl7days` and `NetFractionRevolvingBurden` are followed by the models regardness of the most import feature. Other features are competing each other with high variance, or doesn't show much importance compared to the first listed 3 features.
 
 ### TabNet
 
@@ -78,4 +97,32 @@ In **TabNet**, one can give variations of parameters in number of dimensions, at
 ![image](./assets/f1_tabnet_wo_pp.png)
 ![image](./assets/acc_tabnet_wo_pp.png)
 
-I have used the best F1-score which is (`n_d=n_a=32`, `n_steps=7`)
+I have used the best F1-score which configures as `n_d=n_a=32`, `n_steps=7`. TabNet supports feature importance and explanation matrix. Former represents the models' feature importance in global point of view - by regarding the whole dataset, while the latter contains (`# instances`, `# features`) matrix of importance, i.e. contains all the feature importance by instance.
+
+The first image below shows the feature importance of the TabNet.
+![image](./assets/feature_importance_tabnet.png)
+
+The second image below shows the explanation matrix, through calculating the whole mean and variance among all instances. We can see much variance here.
+![image](assets/mean_explanation_matrix_tabnet.png)
+
+Both the feature importance and explanation matrix shows consistent results in that they have 3 most importance features - `ExternalRiskEstimate`, `MSinceMostRecentInqexcl7days` and `NetFractionRevolvingBurden`. Other features are almost agrees in the order except that few features are competing.
+
+## Conclusion
+
+In this work, I have tried to improve the performance by 2 different family of models - tree-based and MLP. From hold-out dev data result, MLP-based model, TabNet, outperformed tree-based model with 71.8% over 68%. With these models, I have found out that the most important feature was `ExternalRiskEstimate`, which resides with the previous works of FICO competition in interpretability. Other important features in predicting the successful loaning was `MSinceMostRecentInqexcl7days` and `NetFractionRevolvingBurden` and these results are consistent in both tree-based and TabNet result as well. Since most of the features are not hand-crafted in detail, there must be a model that better performs than 71.8% in F1-score.
+
+## References
+
+HELOC
++ [XAI Stories](https://pbiecek.github.io/xai_stories/story-heloc-credits.html)
++ [FICO Community Blog](https://community.fico.com/s/blog-post/a5Q2E0000001czyUAA/fico1670)
++ [An Interpretable Model with Globally Consistent Explanations for Credit Risk](https://users.cs.duke.edu/~cynthia/docs/ChenEtAlFICO2018.pdf)
++ [Explainable AI for Interpretable Credit Scoring](https://arxiv.org/ftp/arxiv/papers/2012/2012.03749.pdf)
+
+Models
++ [TabNet: Attentive Interpretable Tabular Learning](https://arxiv.org/pdf/1908.07442.pdf)
++ [TabTransformer: Tabular Data Modeling Using Contextual Embeddings](https://arxiv.org/pdf/1908.07442.pdf)
++ [Deep Neural Networks and Tabular Data: A Survey](https://arxiv.org/pdf/2110.01889.pdf)
+  
+Interpretability
++ [A Survey on Neural Network Interpretability](https://arxiv.org/pdf/2012.14261.pdf)
